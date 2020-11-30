@@ -1,0 +1,82 @@
+## Veri Açıklaması: Kişilerin sosyal medyada gördüğü reklamlardaki ürünü alıp
+# almama durumu
+
+## Importing the libraries
+
+## numpy modülü array çarpımları gibi yüksek işlem gücü isteyen lineer cebir
+# işlemlerini bize fonksiyonel olarak sunan bir modül
+
+## pandas modülü verimiz üzerinde işlem yapmamızı sağlayan bir modül. Veriyi
+# çekme, ayırma vb. gibi işlemler için kullanılıyor.
+import numpy as np
+import pandas as pd
+
+## Importing the dataset
+
+## Verisetimizi projemize yüklüyoruz. .csv olması read_csv() fonksiyonunu
+# kullandığımız için önemli.
+dataset = pd.read_csv('Social_Network_Ads.csv')
+
+## Burada veriyi anaconda'da açıp inceledikten sonra gerekli feature'lara karar
+# verip, gereksizleri ele almama ve class değişkenine karar verme işi yapılıyor.
+# Bu kararlardan sonra 2 ve 3'ün feature, 4'ün de class olacağı
+# görülüyor. Alttaki satırda da veri setinin 2-4 arası alınıyor.
+X = dataset.iloc[:, [2, 3]].values
+
+## 4. kolon da class olarak alınıyor.
+y = dataset.iloc[:, 4].values
+
+## Feature Scalling
+
+## Veri önişlemenin son aşamalarından olan feature sclaing yapıyoruz. Veri
+# setimizde diğer kolonlara baskın çıkabilecek sayısal değerlere sahip
+# kolonlar var. Bu durumu bertaraf etmek için feature scale yöntemi olan
+# standartlaştırma yöntemini kullanmak adına StandardScaler sınıfını import
+# ediyor ve X veri setine uyguluyoruz. y veri setine feature scale uygulayıp
+# uygulamamak ise fark edici bir nokta değil ama genelde uygulamak tercih
+# edilen seçim
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X = sc.fit_transform(X)
+
+## Splitting the dataset into the Training set and Test set
+
+## Tüm veri ön işleme aşamalarından sonra test-train ayrımı yapılıyor. Bunun için
+# aşağıdaki kütüphanenin fonksiyonu kullanılıyor.
+from sklearn.model_selection import train_test_split
+
+## Fonksiyon 4 tane değer döndürüyor. Bunlar X yani feature kolonları için
+# eğitim ve test, ile y yani class kolonu için eğitim ve test verileri.
+# random_state parametresinin 1
+# olması bu parametreyi kullanıp 1 yapan herkese karışık ama aynı veri
+# setinin geleceğini ifade ediyor.
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+
+## Fitting classifier to the Training set
+
+## Artık algoritmayı kullanmanın zamanı. sklearn'ün tree modülünden
+# gerekli sınıfı çağırdık. Bu modülün altından da Decision Tree algoritmasının
+# sınıflandırma için olan sınıfı DecisionTreeClassifier sınıfını çağırıyoruz.
+from sklearn.tree import DecisionTreeClassifier
+
+## DecisionTreeClassifier'dan nesne oluşturup, bu sınıfa ait fit() metodunu
+# çağırıyoruz. Eğitim için gerekli X_train ve y_train parametrelerini vererek
+# eğitimi gerçekleştiriyoruz.
+classifier = DecisionTreeClassifier()
+classifier.fit(X_train, y_train) #x trainden y traini öğren
+
+## Predicting the Test set results
+
+## Algoritmanın eğitimi tamamlandı. Performansını ölçmek adına test için
+# ayırdığımız eğitime karışmamış verileri modele veriyoruz ve bize test setindeki
+# verilerin tahminlerini yapıyor.
+y_pred = classifier.predict(X_test)
+
+## Making the Confusion Matrix
+
+## Tahminleri yaptırdıktan sonra doğruluk oranımızı görmek ve modelimizin somut
+# çıktısını almak adına Confusion Matrix'i hesaplatıyoruz. Hesaplatmak için
+# çağırdığımız kütüphanedeki fonksiyona görüldüğü üzere test setinin gerçek
+# verilerini ve modelin tahmin ettiği verileri veriyoruz. 
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
