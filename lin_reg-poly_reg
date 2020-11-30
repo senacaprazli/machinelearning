@@ -1,0 +1,72 @@
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+veriler = pd.read_csv("maaslar.csv")
+x = veriler.iloc[:,1:2]
+y= veriler.iloc[:,2:]
+X=x.values
+Y=y.values
+
+#linear regression kütüphanesini dahil ediyoruz kodumuzu. Burda hesaplamaları kendisi yapabilmesi için geldi bu
+from sklearn.linear_model import LinearRegression
+lin_reg = LinearRegression() #obje oluşturduk. 
+lin_reg.fit(X,Y) #fit yani eğit diyoruz
+
+plt.scatter(X,Y,color="red") #x ve y data pointlerini al diyoruz. 
+plt.plot(x,lin_reg.predict(X),color = "blue") #x'in karşılığı olan değeri lin reg'de x'i predict etsin
+plt.show()
+# kırmızı noktalar datasetimizi mavi de lineear reg. modelimizi gösteriyor. 
+#polynomial regression diye bişey var burda tahmin eğrimiz değişiyor dereceleniyor daha güzel bir tahmin şansımız oluyor.
+
+from sklearn.preprocessing import PolynomialFeatures
+#polinomal olarak ifade etmemizi sağlıyor istediğimiz dereceyi verebiliyoruz. 
+poly_reg = PolynomialFeatures(degree = 2) #yine obje oluşturduk poly nesnesinden oluşan 2.dereceden bi nesne
+x_poly = poly_reg.fit_transform(X) #linear dünyadaki değerimi polynomal dünyasına çekiyoruz. 
+
+print(x_poly) 
+# 1 den 10a kadar giden değerler ve her değerin karşılığı 
+#polynmalda birden fazla değişkenimiz oluyordu. burda da x üzeri 0 x üzeri 1 ve x kareleri görüyoruz. formülden gelen bir durum bu.
+#daha iyi anlamak için buraya başka bir lineear reg oluşturduk
+lin_reg2=LinearRegression()
+lin_reg2.fit(x_poly,y) #x polyi y ye göre fit et yani eğit diyorum.
+#burda oluşturmuş olduğumuz x üzeri 0 1 ve 2 yi kullanarak y'yi öğren diyoruz.
+#yani öğrenen sistemimiz aslında 3 tane kolonun çarpanlarını öğrenen sistem haline dönüşecek.
+#şimdi bunları görselleştirelim bakalım ne kadar öğrenmiş.
+
+plt.scatter(X,Y,color="red") #x ve y data pointlerini görelim bu kodla
+#x değerline karşılık gelen lin reg 2 deki predictleri görelim. 
+#biz bunu polynmal olarak görmek istediğimiz için polynaml dönüşüm yapıp tahmin ettireceğiz.
+plt.plot(X,lin_reg2.predict(poly_reg.fit_transform(X)),color = "blue")
+#biz burda diyoruz ki sen linear regression değeri çizeceksin ama bu herbir x değeri için bunu polynmal dünyaya çevir. Biz burda yine doğrusal bir tahmin ettiriyoruz ama herhangi bir değeri vermeden önce polynmal özelliğe dönüştüyoruz.
+plt.show()
+#  data pointerlimiz burada oluşturmuş olduğumuz linear regresn modelimiz 2. Dereceden bir denklem dolayısıyla x kare en büyük değeri daha önce oluşturmuş olduğumuz doğrusal regresyona göre çok daha iyi bir model oluştu çok daha yakın geçiyor data pointlerden. Biz burda yine doğrusal bir tahmin ettiriyoruz ama herhangi bir değeri vermeden önce polynmal özelliğe dönüştüyoruz. 
+#bunu şimdi 4. Derecen yapalım
+#bakın şimdi çok daha iyi bir model oluştu. Her veride böyle güzel bir model yakalayamayız bizim verimiz bu modele özel olarak seçilmiş bir veri. Polinom artışa uygun seçilmiş bir veri daha iyi anlayalım diye seçildi bu. 
+
+
+from sklearn.preprocessing import PolynomialFeatures
+
+poly_reg = PolynomialFeatures(degree = 4)
+x_poly = poly_reg.fit_transform(X)
+print(x_poly)
+lin_reg2=LinearRegression()
+lin_reg2.fit(x_poly,y)
+plt.scatter(X,Y,color="red")
+plt.plot(X,lin_reg2.predict(poly_reg.fit_transform(X)),color = "blue")
+plt.show()
+
+#tahminler
+print("tahminler")
+print(lin_reg.predict([[11]]))
+print(lin_reg.predict([[6.6]]))
+
+
+
+print(lin_reg2.predict(poly_reg.fit_transform([[1]])))   #burda direkt lin reg dersek doğrusal olarak tahmin eder bunu o yüzden poly diyoruz. 
+print(lin_reg2.predict(poly_reg.fit_transform([[11]])))
+print(lin_reg2.predict(poly_reg.fit_transform([[6.6]])))
