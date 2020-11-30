@@ -1,0 +1,36 @@
+#1. kutuphaneler
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+#2. Veri Onisleme
+
+#2.1. Veri Yukleme
+veriler = pd.read_csv('musteriler.csv')
+
+X = veriler.iloc[:,3:].values  #YAS VE NE KADAR HACIMLE İŞ YAPTIĞINI ALDIK
+#Kmeans kütüphanesi dahil edicem bunu skleran dokümantasyonundanda bakabiliriz. 
+#https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
+
+from sklearn.cluster import KMeans
+
+#kmeans adında bir obje tanımlıyoruz yine her seferinde çağırmamak için uzun uzun ve bu objenin değerlerini belirtiyoruz. Kaç cluster istediğimizi yazıyoruz. 
+kmeans = KMeans( n_clusters =3, init="k-means++") #kaç tane clusters yani küme olacağını belirtiyoruz.
+                                                 # ve k means yöntemini bu yöntemde hata sayısı daha düşük.
+
+kmeans.fit(X) #x imizi kmeans üzerinde train ediyoruz. 
+
+print(kmeans.cluster_centers_) #algoritmanın oluşturduğu cluster Centerlarını bize versin nerde olduğunu.  Bunu bir çalılştıralım. Bakın şimdi bize verdiği değerler 3 cluster dediğimiz için 3 tane centerpointleri verdi bize yani merkez noktalarını ilk değer hacim olarak orta nokta ikinci değer ise maaş olarak orta nokta 1. Sıra ilk clusterın 2. 2 3. İse 3.
+#kaç cluster olmasını nasıl tesbit ederiz bunu bulmak için döngüye soktuk.
+sonuclar = []
+
+for i in range(1,11):
+    kmeans=KMeans(n_clusters = i,init="k-means++",random_state=123 )
+    #random stateleri aynı fakat clustersları farklı olarak 10 a kadar deniyoruz. Çünkü bu veriler sürekli değişmesin yani aynı kalsın 
+    #bunu sonuclar kümesine atıp daha sonra plt ile çizerek değerlere bakıyoruz.
+    #değerlere göre kırılma noktasını seçip clusterın adedini belirliyoruz. burada adet 2 3 veya 4 olabilir. Dirsek noktası videodan hatırlayın.!
+   
+    kmeans.fit(X)
+    sonuclar.append(kmeans.inertia_)
+    
+plt.plot(range(1,11),sonuclar)
