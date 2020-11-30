@@ -1,0 +1,27 @@
+# Apriori
+
+# Importing the libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+veriler = pd.read_csv('sepet.csv', header = None) #verilerin sütun başlığı olmadığı için burda none olarak belirtiyoruz. Read csv’nin bir özelliği var. Bunu internetten bakabilirsiniz. Googledan araştırdığımıda pandas read csv diye bunu bulabilirsiniz. Eski verilerimiz de yaş kilo maaş gibi kolon başlıkları vardı hatırlarsınız burda öyle bir başlık yok. O yüzden başlık yok diye belirtiyoruz. 
+
+
+
+t = [] #burda bir liste oluşturuyoruz. Boş bir liste. Bu listenin içerisine listeler ekleyeceğim yani listenin listesi olmuş olacak içerisinde.
+#çünkü aldığımız kütüphane liste içinde liste istiyor bizden yani her bir eleman bir listede olacak. Hatırlayın dersten LIST OF LIST!
+#ve herbir satırıda ayrı bir liste olarak ayıracağız
+for i in range (0,7501): #7501 tane satır olduğu için bunu yazdık 
+    t.append([str(veriler.values[i,j]) #BU AÇIKLMAYI SİLİN KOD YAZARKEN AŞAĞIDAKİ FOR DÖNGÜSÜNÜ BURAYA YAZIN!. her bir işlemi bu t’ye ekleyeceğim. Append ekle demek t listesinin sonuna ekliyoruz. Burda i dememizin sebebi yukarıda i ile belirttik for da her bir değer i ye geliyor. İ burda her bir satırı temsil edecek j ise bu satırdaki her bir değeri. Bunun için bir döngü daha yapacağız. İlk yaptığımız döngü bütün satırlara gidicek ikinci döngü bu satırlardaki ürünler içerisinde dönecek. Bu gelen değerler string olması gerektiği için yani tırnak işareti içersinde olması gerektiği için str fonksiyonuna alacağız. 
+ for j in range (0,20)]) #her bir satır ve hir bir ürün i satır j her bir ürün satırdaki dedik. bunun için sepette en fazla ürün olan değeri almalıyız yoksa eksik ürün alır o yüzden buraya 20 diyoruz. Bakın bunları bir listeye aldık köşeli parantezle onu da göstereyim. Şimdi bunu bir çalıştıralım. Ve tyi inceleyelim. Bakın bunlar artık liste şeklinde. Artık biz apiyoriyi kullanabiliriz. 
+
+
+from apyori import apriori
+#bu kütüphaneyi dahil etmiş oluyoruz. Apyori kütüphanesinden aprioriyi dahil ediyoruz. Normalde pandas numpy gibi kütüphaneler spyderın kendi dizininde olduğu için ekstra onu indirmemiz gerekmiyor. Ama biz ekstra bir kütüphane eklediğimiz için bunu dizine attık.  Bizden list of list yani listenin içinde bir liste istiyor. Bakın dışarda bi liste var içerisinde bi liste daha var. Yani şimdi verimize bakarsak başladığı yerden en sona kadar bunların hepsi bir liste olacak ve ayrıca her bir ürün sepeti yani her satırda bir liste olacak.  Bunun için kaç satır olduğuna bakıyoruz.  
+kurallar = apriori(t,min_support=0.01, min_confidence=0.2, min_lift = 3, min_length=2)  #min lengthde en az kaç tane ürün olsun diyoruz bunun max ı da var ama yazmadım. 
+
+print(list(kurallar))
+
+#sonuç olarak kıyma alanlar ve baharat alıyorlarmış normalde birinin alınma ihtimali birisi alındığında 3 kat artıyormuş
+
