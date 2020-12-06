@@ -1,0 +1,69 @@
+
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Dec  5 14:10:50 2020
+
+@author: LENOVO
+"""
+
+#1. kutuphaneler
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# veri kümesi
+dataset = pd.read_csv('Social_Network_Ads.csv')
+X = dataset.iloc[:, [2, 3]].values
+y = dataset.iloc[:, 4].values
+
+# eğitim ve test kümelerinin bölünmesi
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+
+# Ölçekleme
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+# SVM
+from sklearn.svm import SVC
+classifier = SVC(kernel = 'rbf', random_state = 0)
+classifier.fit(X_train, y_train) #x trainden y yi bul. 
+
+# Tahminler
+y_pred = classifier.predict(X_test)
+
+#  Confusion Matrix
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
+
+print(cm)
+
+
+#k-katlamali capraz dogrulama 
+from sklearn.model_selection import cross_val_score
+''' 
+bu cross val 3 değer alıyor bunlara netten bakabiliriz. 
+1. estimator : hangi algoritmayı kullanacağı yani classifier burda çünkü biz ismini öyle verdik.
+2. hangi x değerinden hangi y değerini train edecek onu belirtiyoruz. bağımlı ve bağımsız değişkenler
+X diyoruz yani.
+3. Y
+4. cv : kaç katlamalı yani kaça kadar böleceği. 
+
+'''
+basari = cross_val_score(estimator = classifier, X=X_train, y=y_train , cv = 4)
+print(basari.mean()) #başarı ortalamasını verir. biz burda svm denedik svmin başarını gördük. 
+#başka algoritmalar kullanarak bunların başarılarını da görüp en iyisini seçebiliriz. 
+print(basari.std()) #standart sapmayı verir. ne kadar düşükse o kadar iyi çünkü
+#her bir çalışmanın sonucunda ne kadar farklı çıktı. yani hepsi %90 çıkarsa sapma düşük olur 
+#ama biri 50 biri 60 biri 90 sa sıkıntı sapma büyük olur.
+
+
+
+
+
+
+
+
+
